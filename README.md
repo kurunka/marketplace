@@ -1,5 +1,7 @@
 # Мини-маркетплейс
 
+[![CI](https://github.com/kurunka/marketplace/actions/workflows/ci.yml/badge.svg)](https://github.com/kurunka/marketplace/actions/workflows/ci.yml)
+
 Демо-маркетплейс с каталогом, серверной корзиной, оформлением заказов и админкой.
 Полный цикл на одном стеке: **Nuxt 3 + TypeScript** → **nginx** → **FastAPI** → **PostgreSQL**.
 
@@ -185,6 +187,10 @@ cd frontend
 npm run typecheck
 npm run build
 ```
+
+Всё это же прогоняется в CI на каждый push — четыре job'а: линтеры и тесты бэкенда,
+типизация и сборка фронтенда, сборка Docker-образов, поднятие compose-стека
+с проверкой `/api/health`.
 
 ---
 
