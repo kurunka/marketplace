@@ -28,7 +28,15 @@ jobs:
         run: ruff check app tests
 
       - name: Pytest
-        run: pytest -q
+        run: |
+          set +e
+          pytest -q --tb=long > pytest.log 2>&1
+          code=$?
+          cat pytest.log
+          if [ $code -ne 0 ]; then
+            python -c "import pathlib;log=pathlib.Path('pytest.log').read_text(errors='replace')[-2500:];print('::error title=pytest failed::'+log.replace('%','%25').replace(chr(13),'').replace(chr(10),'%0A'))"
+          fi
+          exit $code
 
   frontend:
     name: Frontend — typecheck & build
