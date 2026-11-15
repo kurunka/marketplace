@@ -9,14 +9,21 @@ from collections.abc import Sequence
 
 import sqlalchemy as sa
 from alembic import op
+from sqlalchemy.dialects import postgresql
 
 revision: str = "0001_init"
 down_revision: str | None = None
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
-user_role = sa.Enum("customer", "admin", name="user_role")
-order_status = sa.Enum("pending", "paid", "shipped", "done", "cancelled", name="order_status")
+# create_type=False: типы создаём явно ниже. Иначе create_table попытается
+# выполнить CREATE TYPE повторно и PostgreSQL упадёт с "type already exists".
+user_role = postgresql.ENUM("customer", "admin", name="user_role", create_type=False)
+order_status = postgresql.ENUM(
+    "pending", "paid", "shipped", "done", "cancelled",
+    name="order_status",
+    create_type=False,
+)
 
 
 def upgrade() -> None:

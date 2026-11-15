@@ -101,11 +101,18 @@ jobs:
             if curl -fsS http://localhost/api/health; then exit 0; fi
             sleep 2
           done
-          docker compose logs
+          echo "API did not come up"
           exit 1
 
       - name: Catalog responds
         run: curl -fsS "http://localhost/api/products" | head -c 300
+
+      - name: Diagnostics
+        if: failure()
+        run: |
+          docker compose ps -a
+          docker compose logs --no-color --tail=150 > compose.log 2>&1 || true
+          python -c "import pathlib;log=pathlib.Path('compose.log').read_text(errors='replace')[-6000:];print('::error title=compose logs::'+log.replace('%','%25').replace(chr(13),'').replace(chr(10),'%0A'))"
 
       - name: Tear down
         if: always()
